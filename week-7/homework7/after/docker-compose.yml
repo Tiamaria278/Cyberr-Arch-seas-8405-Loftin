@@ -1,21 +1,27 @@
 services:
   web:
     build: .
-    image: mywebapp
+    image: mywebapp:latest
     ports:
-      - "15000:5000"
+      - "127.0.0.1:15000:5000"
     depends_on:
       - db
     networks:
       - frontend
-  db:
-    image: postgres:13
+    read_only: true
+    security_opt:
+      - "no-new-privileges:true"
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
+      - APP_PASSWORD=${APP_PASSWORD}
+  db:
+    image: postgres:13-alpine
+    env_file:
+      - .env
     networks:
       - backend
+    volumes:
+      - postgres_data:/var/lib/postgresql/postgres_data
+    
 networks:
   frontend:
   backend:
