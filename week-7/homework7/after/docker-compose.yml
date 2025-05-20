@@ -1,29 +1,25 @@
 services:
   web:
     build: .
-    image: mywebapp:latest
+    image: mywebapp
     ports:
-      - "127.0.0.1:15000:5000"
+      - "15000:5000"
+    volumes:
+      - .:/app
+    command: flask run --host=0.0.0.0 --port=5000
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
     depends_on:
       - db
     networks:
       - frontend
-    read_only: true
-    security_opt:
-      - "no-new-privileges:true"
-    environment:
-      - APP_PASSWORD=${APP_PASSWORD}
   db:
-    image: postgres:13-alpine
+    image: postgres:13
     env_file:
       - .env
     networks:
       - backend
-    volumes:
-      - postgres_data:/var/lib/postgresql/postgres_data
-    
 networks:
   frontend:
   backend:
-volumes:
-  postgres_data:

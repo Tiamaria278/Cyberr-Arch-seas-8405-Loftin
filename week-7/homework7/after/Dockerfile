@@ -1,17 +1,15 @@
-
 FROM python:3.13-alpine
 
-RUN addgroup -S appgroup && adduser -S -G appgroup appuser
+RUN adduser -D appuser
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY . /app
 
-COPY . .
-
-RUN chown -R appuser:appgroup /app
+RUN pip install -r requirements.txt
 
 USER appuser
+
+HEALTHCHECK --interval=30s --timeout=10s CMD curl -f http://localhost:5000/ || exit 1
 
 CMD ["python", "app.py"]

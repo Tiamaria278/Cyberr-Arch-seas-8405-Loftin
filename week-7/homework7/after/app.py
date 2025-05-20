@@ -23,8 +23,8 @@ def ping():
         return jsonify({"error": "IP address not provided"}), 400
     try:
         ipaddress.ip_address(ip)
-        result = subprocess.check_output(["ping","-c", "1", ip], timeout=5)
-        return result.decode('utf-8')
+        result = subprocess.check_output(["ping","-c", "1", ip])
+        return result
     except ValueError:
         return jsonify({"error": "Invalid ip address format"}), 400
     except subprocess.TimeoutExpired:

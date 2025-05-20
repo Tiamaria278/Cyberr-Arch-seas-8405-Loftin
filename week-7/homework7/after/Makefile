@@ -1,4 +1,12 @@
 # Pre-build security checks
+# I was not able to run the make check on either the before or after folder.  I received the following error:
+# PS C:\Users\jewel\Documents\Cyberr-Arch-seas-8405-Loftin\week-7\homework7\after> make check
+# "Running code analysis with Bandit..."
+# docker run --rm -v :/app python:3.9-alpine sh -c "pip install bandit && bandit -r /app"
+# docker: invalid spec: :/app: empty section between colons
+
+Run 'docker run --help' for more information
+make: *** [Makefile:4: check] Error 125
 check:
 	@echo "Running code analysis with Bandit..."
 	docker run --rm -v $(PWD):/app python:3.9-alpine sh -c "pip install bandit && bandit -r /app"
@@ -22,7 +30,6 @@ run:
 scan:
 	docker scout recommendations mywebapp:latest
 
-# Docker Compose commands
 build:
 	docker compose build
 
