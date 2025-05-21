@@ -1,0 +1,55 @@
+# Summary Report: Securing Containerized Microservices
+
+## Steps Taken
+- Overview
+In this assignment, I acted as a cybersecurity architect responsible for transforming a vulnerable containerized Flask web application into a secure deployment. The project began with analyzing the original app.py code, identifying flaws like hardcoded credentials, command injection in the /ping route, and unsafe usage of the eval() function. I proceeded to run the insecure app using make start and accessed its endpoints to understand its behavior. Initial scanning using make check, make scan, and make host-security confirmed the presence of vulnerabilities.
+
+Remediation involved updating the Flask application code to eliminate hardcoded secrets, replacing eval() with ast.literal_eval for sandboxed evaluation, and implementing strict input validation. I also hardened the container environment by modifying the Dockerfile to use a minimal base image, enforce a non-root user, and introduce a HEALTHCHECK. Further improvements were made in the docker-compose.yml file, including read_only settings, memory and process limits, port exposure restriction, and usage of .env files to manage secrets.
+
+1. **Environment Setup**: Launched the vulnerable Python Flask app using `make start`, tested its endpoints, and scanned for issues using `make check`, `make scan`, and `make host-security`.
+2. **Code Remediation**: 
+   - Replaced `eval()` with `ast.literal_eval()` to prevent arbitrary code execution.
+   - Added input validation to sanitize user inputs.
+   - Removed hardcoded passwords and loaded secrets from a `.env` file.
+   - Restricted the Flask app to `127.0.0.1`.
+3. **Docker Hardening**:
+   - Used a slim Python base image to reduce the attack surface.
+   - Ensured the app runs as a non-root user.
+   - Added a `HEALTHCHECK` and limited resources using `mem_limit` and `pids_limit`.
+   - Created a `.env` file and implemented `.env` loading via `docker-compose.yml`.
+4. **Threat Modeling**:
+   - Performed STRIDE analysis identifying spoofing, tampering, and elevation of privilege.
+   - Mapped MITRE ATT&CK techniques (e.g., T1059, T1203).
+   - Mapped controls to NIST 800-53 standards (e.g., AC-6, SC-12).
+5. **Security Architecture**:
+   - Designed a secure architecture diagram including user interface, proxy layer, hardened Flask app, and container.
+6. **Automation**:
+   - Developed `docker_security_fixes.py` to update Docker daemon configuration and patch Dockerfile with best practices.
+
+## Vulnerabilities Found and Fixed
+- Command Injection: The /ping endpoint allowed execution of arbitrary system commands due to unsanitized input. This was mitigated by introducing IP address validation using   regular expressions.
+- Insecure Use of eval(): The eval() function enabled arbitrary code execution. Replaced with ast.literal_eval() to ensure safe expression evaluation.
+- Hardcoded Secrets: The app used a hardcoded password string. This was replaced by reading from environment variables via a .env file.
+- Flask Bound to 0.0.0.0: Flask was accessible externally. I restricted it to run on 127.0.0.1 only.
+- Container Running as Root: The Docker container originally ran as root, which poses a significant risk. A non-root user was created and used for running the app.
+- Lack of resource limits and health monitoring.
+
+## Architecture Improvements
+- The final architecture incorporates Defense in Depth (DiD) principles. Sensitive data is stored outside the codebase using environment variables. 
+- The redesigned container setup uses least-privilege principles.
+- The containerized app uses a minimal image, runs as a non-root user, and includes a HEALTHCHECK for service availability monitoring. Resource restrictions in Docker Compose (memory, pids) prevent abuse during runtime.
+- Threat modeling using STRIDE identified multiple areas of concern, and corresponding mitigations were implemented. The architecture diagram reflects a secure communication flow with localhost access only, secure secret management, and hardened container settings.
+- Environment secrets are externalized using `.env`.
+- The system includes memory, process, and health constraints.
+- These controls align with NIST 800-53, and threat mappings were referenced using the MITRE ATT&CK framework.
+- Attack surfaces are minimized through hardened Docker configuration and strict input handling.
+
+## Future Enhancements
+- Integrate authentication using OAuth2 or token-based API authentication.
+- Automate dependency scanning and updates using CI tools.
+- Add runtime protection using container security tools like Falco.
+-Expand logging and alerting mechanisms for better observability.
+
+## Lessons Learned
+This assignment emphasized the importance of proactive security in software development, defense-in-depth, and secure software development practices. Seemingly minor decisions like skipping input validation or using root containers can open significant attack vectors. Simple oversights, like hardcoded secrets or unsafe function usage, can introduce critical vulnerabilities. It reinforced the necessity of applying secure defaults, validating all inputs, managing secrets responsibly, and reducing container privileges.
+Through hands-on implementation, I gained valuable experience in container security, secure software development lifecycle (SSDLC) practices, and mapping threats to real world frameworks like STRIDE and MITRE. This exercise also highlighted the role of automation like auto-hardening scripts in scaling secure practices in DevOps environments. Critically, the assignment demonstrated how layered security measures collectively reduce the attack surface. It also underlined that security should not be an afterthought but an integral part of architecture and implementation decisions from the start.
