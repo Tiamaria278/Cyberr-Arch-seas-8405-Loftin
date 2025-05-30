@@ -19,3 +19,27 @@ Logged: Hello Application!
 
 You should also see a log message in the terminal where the docker container is running that looks like:
  - `... INFO ... User input: Hello Application!`
+
+ # Log4Shell Exploitation & Defense Playground
+
+This repository demonstrates how to **exploit** the Log4Shell vulnerability (CVE-2021-44228), **defend** against it with version updates and input controls, and **simulate incident response** using the MITRE frameworks (ATT&CK, DEFEND, REACT).
+
+---
+
+## Prerequisites
+
+- Docker & Docker Compose installed
+- Python 3.8+ (for attacker LDAP server)
+- `ldap3` Python package (`pip install ldap3`)
+- `curl` for sending HTTP requests
+
+---
+
+## Environment Setup
+
+1. **Clone & Build**  
+   ```bash
+   git clone <your-repo-url>
+   cd log4shell-homework
+   docker compose up --build -d
+
