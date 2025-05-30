@@ -1,11 +1,21 @@
-from ldap3 import Server, Connection, ALL, NTLM, Tls
-import logging
+from ldap3 import Server, Connection, ALL
+import socket, time
+
+HOST="0.0.0.0"
+PORT=389
+print("ldap server listening on port 389.")
+listener=socket.Socket()
+listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
+listener.bind((HOST, PORT))
+listener.listen()
 
 try:
-    server=Server('ldap://127.0.0.1:389', get_info=ALL)
-    connection=Connection(server, auto_bind=True, receive_timeout=1)
-    print("ldap server listening on port 389.")
-    connection.serve_forever()
+
+    sock, _=listener.accept()
+    conn=Connection(Server(None, get_info=ALL), client_socket=sock)
+    time.sleep(2)
+    conn.unbind()
+    sock.close()
 
 except KeyboardInterrupt:
     print("\nldap server shutting down...")
@@ -14,6 +24,5 @@ except Exception as e:
     print(f"an error occurred: {e}")
 
 finally:
-    if 'connection' in locals() and connection.listening:
-        connection.stop_listening() 
+    listener.close
     print("ldap server stop")
