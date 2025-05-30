@@ -10,7 +10,7 @@
 | Denial of Service      | Unlimited requests        | Add rate limiting and input validation |
 | Elevation of Privilege | Root container access     | Use non-root users in Docker           |
 
-## 2. MITRE ATT&CK Mapping (Containers)
+## 2. MITRE ATTACK Mapping (Containers)
 | Tactic         | Technique ID | Technique Name | Application Relevance |
 |----------------|--------------|----------------|------------------------|
 | Initial Access | T1190         | Exploit Public-Facing Application | Command injection in `/ping` |

@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak-server
+    command: start-dev
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_PROXY=edge
+    ports:
+      - "8080:8080"
+    networks:
+      - iam_network
+      
+  app:
+    build: ./app
+    container_name: flask-microservice
+    ports:
+      - "5001:5000"
+    environment: 
+      FLASK_APP: app.py
+      FLASK_RUN_HOST: '0.0.0.0'
+      FLASK_DEBUG: "1"
+      FLASK_SECRET_KEY: "123password"
+      KEYCLOAK_REALM_NAME: "CyberArchRealm"
+      KEYCLOAK_SERVER_URL: "http://keycloak-server:8080"
+      KEYCLOAK_CLIENT_ID: "my-flask-api-client"
+      KEYCLOAK_CLIENT_SECRET: "123password"
+      OIDC_REDIRECT_URI: "http://localhost:5001/authorize"
+      OIDC_CLIENT_SECRETS: "123password"
+
+    depends_on:
+      keycloak:
+        condition: service_started
+
+    networks:
+      - iam_network
+volumes:
+  keycloak_data:
+
+networks:
+  iam_network:
+    driver: bridge

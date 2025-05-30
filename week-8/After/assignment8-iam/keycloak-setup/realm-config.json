@@ -1,0 +1,37 @@
+
+{
+ 
+  "realm": "CyberArchRealm",
+  "enabled": true,
+  "clients": [{
+    "clientId": "my-flask-api-client",
+    "secret": "123password",
+    "enabled": true,
+    "redirectUris": ["http://localhost:5001/authorize", "http://localhost:5001/*"],
+    "publicClient": false,
+    "protocol": "openid-connect",
+    "clientAuthenticatorType": "client-secret",
+    "baseUrl": "http://localhost:5001",
+    "adminUrl": "http://localhost:5001",
+    "publicClient": false,
+   
+    "directAccessGrantsEnabled": true,
+    "standardFlowEnabled": true,
+    "fullScopeAllowed": true
+  }],
+  "users": [{
+  "username": "testuser",
+  "enabled": true,
+  "email": "testuser@example.com",
+  "emailVerified": true,
+  "firstName": "Test",
+  "lastName": "User",
+  "requiredActions": [],
+  "credentials": [{
+    "type": "password",
+    "value": "password",
+    "temporary": false
+  }]
+}]
+
+}
